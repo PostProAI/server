@@ -15,11 +15,21 @@ export const projectSchema = new Schema({
     required: true,
     default: '',
   },
-  // status: {
-  //   type: String,
-  //   required: false,
-  //   default: 'active',
-  // },
+  captionLimit: {
+    type: Number,
+    required: false,
+    default: 100,
+  },
+  postLimit: {
+    type: Number,
+    required: false,
+    default: 10,
+  },
+  hashtags: {
+    type: Boolean,
+    required: false,
+    default: true,
+  },
   createdAt: {
     type: Date,
     default: Date.now,

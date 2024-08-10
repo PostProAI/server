@@ -6,7 +6,7 @@ app.use(express.json());
 
 // create new project
 app.post("/create", (req, res) => {
-  const { title, description, openAIKey } = req.body;
+  const { title, description, openAIKey, captionLimit, postLimit, hashtags } = req.body;
   if (!title) {
     res.send({status: "error", message: "Please provide name and description"});
   } else {
@@ -16,6 +16,9 @@ app.post("/create", (req, res) => {
           title,
           description,
           openAIKey,
+          captionLimit,
+          postLimit,
+          hashtags,
         });
         newProject
           .save()
@@ -44,11 +47,15 @@ app.get("/getAllProjects", (req, res) => {
 });
 
 // get project by id
-app.get("/getProjectById/:id", (req, res) => {
+app.get("/:id", (req, res) => {
   const { id } = req.params;
   Project.findById(id)
-    .then((project) => {
-      res.send(project);
+    .then((project: any) => {
+      const response = project
+      if(response === null) {
+        res.send({status: 'error', message: 'Project not found'})
+      }
+      res.send(response);
     })
     .catch((err) => {
       res.send(err);
@@ -56,7 +63,7 @@ app.get("/getProjectById/:id", (req, res) => {
 });
 
 // update project by id
-app.put("/updateProjectById/:id", (req, res) => {
+app.put("/:id", (req, res) => {
   const { id } = req.params;
   const { title, description } = req.body;
   Project.findByIdAndUpdate(id, { title, description }, { new: true })
