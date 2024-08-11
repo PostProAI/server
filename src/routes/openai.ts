@@ -53,7 +53,8 @@ app.post("/createPost", (req, res) => {
     // });
     
     // for development
-    res.json({status: 'success', message: "Image Generated successfully", data: {url: 'https://oaidalleapiprodscus.blob.core.windows.net/private/org-xk9wNX3TJjAt0uiKqqqvfmxO/user-aHUkxwkRI9aTPcZDXTkmLerY/img-08nCk0xx45GWV57q8cwdkq3S.png?st=2024-08-10T13%3A18%3A44Z&se=2024-08-10T15%3A18%3A44Z&sp=r&sv=2023-11-03&sr=b&rscd=inline&rsct=image/png&skoid=d505667d-d6c1-4a0a-bac7-5c84a87759f8&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2024-08-10T07%3A27%3A51Z&ske=2024-08-11T07%3A27%3A51Z&sks=b&skv=2023-11-03&sig=P4GFWUUCVaHTGeFC306TIYVobgO0COlSXEkCBrG5%2B0Y%3D'}});
+    // res.json({status: 'success', message: "Image Generated successfully", data: {url: 'https://oaidalleapiprodscus.blob.core.windows.net/private/org-xk9wNX3TJjAt0uiKqqqvfmxO/user-aHUkxwkRI9aTPcZDXTkmLerY/img-08nCk0xx45GWV57q8cwdkq3S.png?st=2024-08-10T13%3A18%3A44Z&se=2024-08-10T15%3A18%3A44Z&sp=r&sv=2023-11-03&sr=b&rscd=inline&rsct=image/png&skoid=d505667d-d6c1-4a0a-bac7-5c84a87759f8&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2024-08-10T07%3A27%3A51Z&ske=2024-08-11T07%3A27%3A51Z&sks=b&skv=2023-11-03&sig=P4GFWUUCVaHTGeFC306TIYVobgO0COlSXEkCBrG5%2B0Y%3D'}});
+    res.json({status: 'success', message: "Image Generated successfully", data: {url: 'https://global.discourse-cdn.com/openai1/original/4X/0/0/9/009f9039cf2b47d79785495e3b21c3dd97080b42.jpeg'}});
 });
 
 const openaiRouter = app;

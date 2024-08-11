@@ -52,10 +52,11 @@ app.get("/:id", (req, res) => {
   Project.findById(id)
     .then((project: any) => {
       const response = project
-      if(response === null) {
+      if(!response) {
         res.send({status: 'error', message: 'Project not found'})
+      } else {
+        res.send(response);
       }
-      res.send(response);
     })
     .catch((err) => {
       res.send(err);

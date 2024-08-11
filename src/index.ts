@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import logger from "node-color-log";
 import projectsRouter from "./routes/projects";
+import postRouter from "./routes/post";
 import openaiRouter from "./routes/openai";
 import connectDB from "./utils/connectDB";
 dotenv.config();
@@ -33,6 +34,7 @@ app.get("/", (req: Request, res: Response) => {
 
 app.use('/projects', projectsRouter);
 app.use('/openai', openaiRouter);
+app.use('/post', postRouter);
 
 app.listen(port, () => {
   logger.info(`Server is running at http://localhost:${port}`);
