@@ -66,10 +66,33 @@ app.get("/:id", (req, res) => {
 // update project by id
 app.put("/:id", (req, res) => {
   const { id } = req.params;
-  const { title, description } = req.body;
-  Project.findByIdAndUpdate(id, { title, description }, { new: true })
-    .then((project) => {
-      res.send(project);
+  const { title, description, openAIKey, captionLimit, postLimit, hashtags } = req.body;
+  if (!title) {
+    res.send({status: "error", message: "Please provide name and description"});
+  } else {
+    Project.findByIdAndUpdate(id, { 
+      title,
+      description,
+      openAIKey,
+      captionLimit,
+      postLimit,
+      hashtags,
+     }, { new: true })
+      .then((project) => {
+        res.send({status: 'success', project});
+      })
+      .catch((err) => {
+        res.send(err);
+      });
+  }
+});
+
+// delete project by id
+app.delete("/:id", (req, res) => {
+  const { id } = req.params;
+  Project.findByIdAndDelete(id)
+    .then(() => {
+      res.send({status: 'success', message: 'Project deleted successfully'});
     })
     .catch((err) => {
       res.send(err);
