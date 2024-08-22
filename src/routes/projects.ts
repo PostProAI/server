@@ -1,11 +1,13 @@
 import express from "express";
 import Project from "../models/projects";
+import { authMiddleware } from "../middleware/auth";
 
 const app = express.Router();
 app.use(express.json());
+app.use(authMiddleware);
 
 // create new project
-app.post("/create", (req, res) => {
+app.post("/create", (req: any, res) => {
   const { title, description, openAIKey, captionLimit, postLimit, hashtags } = req.body;
   if (!title) {
     res.send({status: "error", message: "Please provide name and description"});
@@ -13,6 +15,7 @@ app.post("/create", (req, res) => {
     Project.find({ title }).then((project) => {
       if (project.length === 0) {
         const newProject = new Project({
+          userId: req?.user?.id,
           title,
           description,
           openAIKey,
@@ -36,13 +39,14 @@ app.post("/create", (req, res) => {
 });
 
 // get all projects
-app.get("/getAllProjects", (req, res) => {
-  Project.find()
+app.get("/getAllProjects", (req: any, res) => {
+  const user = req?.user;
+  Project.find({userId: user.id})
     .then((projects) => {
-      res.send(projects);
+      res.send({status: "success", projects});
     })
     .catch((err) => {
-      res.send(err);
+      res.send({status: 'error', message: 'No Projects'});
     });
 });
 

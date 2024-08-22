@@ -4,12 +4,14 @@ import fs from "fs";
 import path from "path";
 import logger from "node-color-log";
 import dotenv from "dotenv";
+import { authMiddleware } from "../middleware/auth";
 dotenv.config();
 const OPEN_AI_ENDPOINT = process.env.OPEN_AI_ENDPOINT;
 const ENVIRONMENT = process.env.ENVIRONMENT || "development";
 
 const app = express.Router();
 app.use(express.json());
+app.use(authMiddleware);
 
 // Function to save a PNG image from a Buffer or Base64 string
 async function saveImage(
@@ -47,7 +49,6 @@ app.post("/check_key", (req, res) => {
       },
     })
     .then((response: AxiosResponse) => {
-      // logger.info('Response Check_key: ', response.data);
       if (response.data.data.length > 0) {
         res.json({ status: "success", message: "Key is valid" });
       } else {

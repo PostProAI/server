@@ -6,6 +6,7 @@ import logger from "node-color-log";
 import projectsRouter from "./routes/projects";
 import postRouter from "./routes/post";
 import openaiRouter from "./routes/openai";
+import userRouter from "./routes/user";
 import connectDB from "./utils/connectDB";
 dotenv.config();
 
@@ -19,7 +20,7 @@ app.use("/uploads", express.static(path.join(__dirname, "/routes/media")));
 app.use(cors({ origin: APP_URL }));
 connectDB();
 
-const middleare = (req: Request, res: Response, next: any) => {
+const middleware = (req: Request, res: Response, next: any) => {
   if (ENVIRONMENT === "development") {
     logger.info(req.method, req.url, req.body);
   } else {
@@ -28,7 +29,7 @@ const middleare = (req: Request, res: Response, next: any) => {
   next();
 };
 app.use(express.json());
-app.use(middleare);
+app.use(middleware);
 
 app.get("/", (req: Request, res: Response) => {
   res.send(`
@@ -41,6 +42,7 @@ app.get("/", (req: Request, res: Response) => {
 app.use("/projects", projectsRouter);
 app.use("/openai", openaiRouter);
 app.use("/post", postRouter);
+app.use("/user", userRouter);
 
 app.listen(port, () => {
   logger.info(`Server is running at http://localhost:${port}`);
