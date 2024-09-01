@@ -77,7 +77,7 @@ app.post("/createPost", (req, res) => {
       status: "success",
       message: "Image Generated successfully",
       data: {
-        url: `uploads/${req.body.projectId}/1723893252644-816159603.png`,
+        url: `uploads/test/test_insta.png`,
       },
     });
   else {
