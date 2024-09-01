@@ -38,6 +38,12 @@ export const projectSchema = new Schema({
     type: Date,
     default: Date.now,
   },
+  connections: {
+    facebook: {
+      isEnabled: {type: Boolean, default: false},
+      token: {type: String, default: ''},
+    },
+  },
 });
 
 const Project = model('Project', projectSchema);

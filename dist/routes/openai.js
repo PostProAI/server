@@ -18,11 +18,13 @@ const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const node_color_log_1 = __importDefault(require("node-color-log"));
 const dotenv_1 = __importDefault(require("dotenv"));
+const auth_1 = require("../middleware/auth");
 dotenv_1.default.config();
 const OPEN_AI_ENDPOINT = process.env.OPEN_AI_ENDPOINT;
 const ENVIRONMENT = process.env.ENVIRONMENT || "development";
 const app = express_1.default.Router();
 app.use(express_1.default.json());
+app.use(auth_1.authMiddleware);
 // Function to save a PNG image from a Buffer or Base64 string
 function saveImage(data_1, folderPath_1, uniqueName_1) {
     return __awaiter(this, arguments, void 0, function* (data, folderPath, uniqueName, isBase64 = false) {
@@ -53,7 +55,6 @@ app.post("/check_key", (req, res) => {
         },
     })
         .then((response) => {
-        // logger.info('Response Check_key: ', response.data);
         if (response.data.data.length > 0) {
             res.json({ status: "success", message: "Key is valid" });
         }
@@ -82,7 +83,7 @@ app.post("/createPost", (req, res) => {
             status: "success",
             message: "Image Generated successfully",
             data: {
-                url: `uploads/${req.body.projectId}/1723893252644-816159603.png`,
+                url: `uploads/test/test_insta.png`,
             },
         });
     else {
