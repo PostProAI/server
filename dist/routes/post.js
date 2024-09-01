@@ -5,8 +5,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const post_1 = __importDefault(require("../models/post"));
+const auth_1 = require("../middleware/auth");
 const app = express_1.default.Router();
 app.use(express_1.default.json());
+app.use(auth_1.authMiddleware);
 // create new post
 app.post("/create", (req, res) => {
     const { projectId, image, caption, hashtags } = req.body;
@@ -14,8 +16,6 @@ app.post("/create", (req, res) => {
         res.send({ status: "error", message: "Please provide image" });
     }
     else {
-        // Post.find({ image }).then((post) => {
-        //   if (post.length === 0) {
         const newPost = new post_1.default({
             projectId,
             image,
@@ -25,15 +25,11 @@ app.post("/create", (req, res) => {
         newPost
             .save()
             .then((post) => {
-            res.send({ status: 'success', post });
+            res.send({ status: "success", post });
         })
             .catch((err) => {
             res.send(err);
         });
-        //     } else {
-        //       res.status(200).send({ status: "error", message: "Post already exists", post: post[0] });
-        //     }
-        //   });
     }
 });
 // get all posts
@@ -54,7 +50,7 @@ app.get("/:id", (req, res) => {
         .then((post) => {
         const response = post;
         if (response === null) {
-            res.send({ status: 'error', message: 'Post not found' });
+            res.send({ status: "error", message: "Post not found" });
         }
         res.send(response);
     })

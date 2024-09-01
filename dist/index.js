@@ -11,6 +11,7 @@ const node_color_log_1 = __importDefault(require("node-color-log"));
 const projects_1 = __importDefault(require("./routes/projects"));
 const post_1 = __importDefault(require("./routes/post"));
 const openai_1 = __importDefault(require("./routes/openai"));
+const user_1 = __importDefault(require("./routes/user"));
 const connectDB_1 = __importDefault(require("./utils/connectDB"));
 dotenv_1.default.config();
 const APP_URL = process.env.APP_URL || "http://localhost:3000";
@@ -20,7 +21,7 @@ const ENVIRONMENT = process.env.ENVIRONMENT || "development";
 app.use("/uploads", express_1.default.static(path_1.default.join(__dirname, "/routes/media")));
 app.use((0, cors_1.default)({ origin: APP_URL }));
 (0, connectDB_1.default)();
-const middleare = (req, res, next) => {
+const middleware = (req, res, next) => {
     if (ENVIRONMENT === "development") {
         node_color_log_1.default.info(req.method, req.url, req.body);
     }
@@ -30,7 +31,7 @@ const middleare = (req, res, next) => {
     next();
 };
 app.use(express_1.default.json());
-app.use(middleare);
+app.use(middleware);
 app.get("/", (req, res) => {
     res.send(`
     <div style="height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center;">
@@ -41,6 +42,7 @@ app.get("/", (req, res) => {
 app.use("/projects", projects_1.default);
 app.use("/openai", openai_1.default);
 app.use("/post", post_1.default);
+app.use("/user", user_1.default);
 app.listen(port, () => {
     node_color_log_1.default.info(`Server is running at http://localhost:${port}`);
 });
