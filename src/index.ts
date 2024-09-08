@@ -14,7 +14,7 @@ const APP_URL = process.env.APP_URL || "http://localhost:3000";
 
 const app: Express = express();
 const port = process.env.PORT || 5001;
-const ENVIRONMENT = process.env.ENVIRONMENT || "development";
+const ENVIRONMENT = process.env.ENVIRONMENT;
 
 app.use("/uploads", express.static(path.join(__dirname, "/routes/media")));
 app.use(cors({ origin: APP_URL }));

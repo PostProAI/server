@@ -7,7 +7,7 @@ import dotenv from "dotenv";
 import { authMiddleware } from "../middleware/auth";
 dotenv.config();
 const OPEN_AI_ENDPOINT = process.env.OPEN_AI_ENDPOINT;
-const ENVIRONMENT = process.env.ENVIRONMENT || "development";
+const ENVIRONMENT = process.env.ENVIRONMENT;
 
 const app = express.Router();
 app.use(express.json());
@@ -71,7 +71,7 @@ app.post("/createPost", (req, res) => {
     // style: "natural"
   };
 
-  if (ENVIRONMENT === "development")
+  if (ENVIRONMENT === "development") {
     // for development
     res.json({
       status: "success",
@@ -80,7 +80,7 @@ app.post("/createPost", (req, res) => {
         url: `uploads/test/test_insta.png`,
       },
     });
-  else {
+  } else {
     // for production
     axios
       .post(`${OPEN_AI_ENDPOINT}/v1/images/generations`, payload, {

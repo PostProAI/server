@@ -23,6 +23,10 @@ export const postSchema = new Schema({
     type: Date,
     default: Date.now,
   },
+  isPosted: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const Post = model('Post', postSchema);

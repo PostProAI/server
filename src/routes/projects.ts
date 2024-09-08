@@ -54,7 +54,6 @@ app.get("/getAllProjects", (req: any, res) => {
     });
 });
 
-// get project by id
 const getFacebookConnection: any = async (token: any) => {
   try {
     const response = await axios.get(`${FACEBOOK_API_ENDPOINT}/me?&access_token=${token}`)
@@ -88,6 +87,7 @@ const getConnections = async (id: string, connection: string, token: string) => 
       return false;
   }
 }
+// get project by id
 app.get("/:id", (req, res) => {
   const { id } = req.params;
   Project.findById(id)
@@ -102,6 +102,8 @@ app.get("/:id", (req, res) => {
           title: response.title,
           description: response.description,
           captionLimit: response.captionLimit,
+          hashtags: response.hashtags,
+          openAIKey: response.openAIKey,
           postLimit: response.postLimit,
           connections: {
             facebook: facebookConnection,
