@@ -17,7 +17,7 @@ dotenv_1.default.config();
 const APP_URL = process.env.APP_URL || "http://localhost:3000";
 const app = (0, express_1.default)();
 const port = process.env.PORT || 5001;
-const ENVIRONMENT = process.env.ENVIRONMENT || "development";
+const ENVIRONMENT = process.env.ENVIRONMENT;
 app.use("/uploads", express_1.default.static(path_1.default.join(__dirname, "/routes/media")));
 app.use((0, cors_1.default)({ origin: APP_URL }));
 (0, connectDB_1.default)();
