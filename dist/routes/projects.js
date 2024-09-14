@@ -67,7 +67,6 @@ app.get("/getAllProjects", (req, res) => {
         res.send({ status: 'error', message: 'No Projects' });
     });
 });
-// get project by id
 const getFacebookConnection = (token) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const response = yield axios_1.default.get(`${FACEBOOK_API_ENDPOINT}/me?&access_token=${token}`);
@@ -104,6 +103,7 @@ const getConnections = (id, connection, token) => __awaiter(void 0, void 0, void
             return false;
     }
 });
+// get project by id
 app.get("/:id", (req, res) => {
     const { id } = req.params;
     projects_1.default.findById(id)
@@ -119,6 +119,8 @@ app.get("/:id", (req, res) => {
                 title: response.title,
                 description: response.description,
                 captionLimit: response.captionLimit,
+                hashtags: response.hashtags,
+                openAIKey: response.openAIKey,
                 postLimit: response.postLimit,
                 connections: {
                     facebook: facebookConnection,

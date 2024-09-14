@@ -21,7 +21,7 @@ const dotenv_1 = __importDefault(require("dotenv"));
 const auth_1 = require("../middleware/auth");
 dotenv_1.default.config();
 const OPEN_AI_ENDPOINT = process.env.OPEN_AI_ENDPOINT;
-const ENVIRONMENT = process.env.ENVIRONMENT || "development";
+const ENVIRONMENT = process.env.ENVIRONMENT;
 const app = express_1.default.Router();
 app.use(express_1.default.json());
 app.use(auth_1.authMiddleware);
@@ -77,7 +77,7 @@ app.post("/createPost", (req, res) => {
         response_format: "b64_json",
         // style: "natural"
     };
-    if (ENVIRONMENT === "development")
+    if (ENVIRONMENT === "development") {
         // for development
         res.json({
             status: "success",
@@ -86,6 +86,7 @@ app.post("/createPost", (req, res) => {
                 url: `uploads/test/test_insta.png`,
             },
         });
+    }
     else {
         // for production
         axios_1.default
