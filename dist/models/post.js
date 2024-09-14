@@ -25,6 +25,10 @@ exports.postSchema = new mongoose_1.Schema({
         type: Date,
         default: Date.now,
     },
+    isPosted: {
+        type: Boolean,
+        default: false,
+    },
 });
 const Post = (0, mongoose_1.model)('Post', exports.postSchema);
 exports.default = Post;
