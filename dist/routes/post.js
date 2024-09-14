@@ -186,3 +186,4 @@ app.put("/:id", (req, res) => {
 });
 const postRouter = app;
 exports.default = postRouter;
+//# sourceMappingURL=post.js.map

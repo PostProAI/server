@@ -32,3 +32,4 @@ exports.postSchema = new mongoose_1.Schema({
 });
 const Post = (0, mongoose_1.model)('Post', exports.postSchema);
 exports.default = Post;
+//# sourceMappingURL=post.js.map

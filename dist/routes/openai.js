@@ -129,3 +129,4 @@ app.post("/createPost", (req, res) => {
 });
 const openaiRouter = app;
 exports.default = openaiRouter;
+//# sourceMappingURL=openai.js.map

@@ -177,3 +177,4 @@ app.delete("/:id", (req, res) => {
     });
 });
 exports.default = app;
+//# sourceMappingURL=user.js.map

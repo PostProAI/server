@@ -49,3 +49,4 @@ exports.projectSchema = new mongoose_1.Schema({
 });
 const Project = (0, mongoose_1.model)('Project', exports.projectSchema);
 exports.default = Project;
+//# sourceMappingURL=projects.js.map

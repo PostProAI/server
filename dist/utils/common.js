@@ -15,3 +15,4 @@ const getFormattedTime = () => {
     return `${year}-${month}-${day} | ${hours}:${minutes}:${seconds}.${milliseconds}`;
 };
 exports.getFormattedTime = getFormattedTime;
+//# sourceMappingURL=common.js.map

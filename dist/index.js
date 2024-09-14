@@ -46,3 +46,4 @@ app.use("/user", user_1.default);
 app.listen(port, () => {
     node_color_log_1.default.info(`Server is running at http://localhost:${port}`);
 });
+//# sourceMappingURL=index.js.map

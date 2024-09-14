@@ -221,3 +221,4 @@ app.delete("/:id", (req, res) => {
 });
 const projectsRouter = app;
 exports.default = projectsRouter;
+//# sourceMappingURL=projects.js.map
