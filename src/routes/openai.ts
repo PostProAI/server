@@ -5,39 +5,77 @@ import path from "path";
 import logger from "node-color-log";
 import dotenv from "dotenv";
 import { authMiddleware } from "../middleware/auth";
+import { uploadFile } from "../utils/common";
+import config from "../utils/firebase.config";
+import { initializeApp } from "firebase/app";
 dotenv.config();
 const OPEN_AI_ENDPOINT = process.env.OPEN_AI_ENDPOINT;
 const ENVIRONMENT = process.env.ENVIRONMENT;
+const TEST_IMAGE_URL = process.env.TEST_IMAGE_URL;
 
 const app = express.Router();
 app.use(express.json());
 app.use(authMiddleware);
 
-// Function to save a PNG image from a Buffer or Base64 string
+if(ENVIRONMENT != "development") {
+  //Initialize a firebase application
+  initializeApp(config.firebaseConfig);
+}
+
+// Function to save a JPEG image from a Buffer or Base64 string
 async function saveImage(
   data: any,
   folderPath: string,
   uniqueName: string,
   isBase64 = false
 ) {
-  const filePath = path.join(__dirname, folderPath, uniqueName);
-
-  // check the directory exists, if not create it
-  const directory = path.dirname(filePath);
-  if (!fs.existsSync(directory)) {
-    fs.mkdirSync(directory, { recursive: true });
-  }
-
+  
+  
   // If the data is in Base64 format, convert it to a Buffer
   const buffer = isBase64 ? Buffer.from(data, "base64") : data;
+  
+  if(ENVIRONMENT === "development") {
+    // 1. save file on server
+    // -------------------------
+      // Generate the file path
+      const filePath = path.join(__dirname, folderPath, uniqueName);
 
-  // Write the buffer to a file
-  try {
-    fs.writeFileSync(filePath, buffer);
-    return true;
-  } catch (error) {
-    console.error("Error saving image", error);
-    return false;
+      // check the directory exists, if not create it
+      const directory = path.dirname(filePath);
+      if (!fs.existsSync(directory)) {
+        fs.mkdirSync(directory, { recursive: true });
+      }
+
+      // Write the buffer to a file
+      try {
+        fs.writeFileSync(filePath, buffer);
+        return {
+          status: "success",
+          message: "Image saved successfully",
+          url: `${TEST_IMAGE_URL}`,
+        };
+      } catch (error) {
+        logger.error("Error saving image", error);
+        return { status: "error", message: "Failed to save image" };
+      }
+    //-------------------------
+  } else {
+    // 2. save file on firebase
+    // -------------------------
+    const res = await uploadFile(uniqueName, buffer, folderPath);
+    if(res.downloadURL) {
+      return {
+        status: "success",
+        message: "Image saved successfully",
+        url: res.downloadURL,
+      };
+    } else {
+      return {
+        status: "error",
+        message: "Failed to save image",
+      };
+    }
+    //-------------------------
   }
 }
 
@@ -77,7 +115,7 @@ app.post("/createPost", (req, res) => {
       status: "success",
       message: "Image Generated successfully",
       data: {
-        url: `uploads/test/test_insta.png`,
+        url: `${TEST_IMAGE_URL}`,
       },
     });
   } else {
@@ -94,14 +132,14 @@ app.post("/createPost", (req, res) => {
           const data = response.data.data[0].b64_json;
           // Generate a unique filename
           const uniqueName =
-            Date.now() + "-" + Math.round(Math.random() * 1e9) + ".png";
+            Date.now() + "-" + Math.round(Math.random() * 1e9) + ".jpeg";
           const uploadResult: any = await saveImage(
             data,
-            `media/${req.body.projectId}`,
+            `PostProAI/${req.body.projectId}`,
             uniqueName,
             true
           );
-          if (!uploadResult) {
+          if (uploadResult.status === "error") {
             res.json({ status: "error", message: "Failed to save image" });
             return;
           }
@@ -109,7 +147,7 @@ app.post("/createPost", (req, res) => {
             status: "success",
             message: "Image Generated successfully",
             data: {
-              url: `uploads/${req.body.projectId}/${uniqueName}`,
+              url: uploadResult.url,
             },
           });
         } else {
