@@ -19,31 +19,68 @@ const path_1 = __importDefault(require("path"));
 const node_color_log_1 = __importDefault(require("node-color-log"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const auth_1 = require("../middleware/auth");
+const common_1 = require("../utils/common");
+const firebase_config_1 = __importDefault(require("../utils/firebase.config"));
+const app_1 = require("firebase/app");
 dotenv_1.default.config();
 const OPEN_AI_ENDPOINT = process.env.OPEN_AI_ENDPOINT;
 const ENVIRONMENT = process.env.ENVIRONMENT;
+const TEST_IMAGE_URL = process.env.TEST_IMAGE_URL;
 const app = express_1.default.Router();
 app.use(express_1.default.json());
 app.use(auth_1.authMiddleware);
-// Function to save a PNG image from a Buffer or Base64 string
+if (ENVIRONMENT != "development") {
+    //Initialize a firebase application
+    (0, app_1.initializeApp)(firebase_config_1.default.firebaseConfig);
+}
+// Function to save a JPEG image from a Buffer or Base64 string
 function saveImage(data_1, folderPath_1, uniqueName_1) {
     return __awaiter(this, arguments, void 0, function* (data, folderPath, uniqueName, isBase64 = false) {
-        const filePath = path_1.default.join(__dirname, folderPath, uniqueName);
-        // check the directory exists, if not create it
-        const directory = path_1.default.dirname(filePath);
-        if (!fs_1.default.existsSync(directory)) {
-            fs_1.default.mkdirSync(directory, { recursive: true });
-        }
         // If the data is in Base64 format, convert it to a Buffer
         const buffer = isBase64 ? Buffer.from(data, "base64") : data;
-        // Write the buffer to a file
-        try {
-            fs_1.default.writeFileSync(filePath, buffer);
-            return true;
+        if (ENVIRONMENT === "development") {
+            // 1. save file on server
+            // -------------------------
+            // Generate the file path
+            const filePath = path_1.default.join(__dirname, folderPath, uniqueName);
+            // check the directory exists, if not create it
+            const directory = path_1.default.dirname(filePath);
+            if (!fs_1.default.existsSync(directory)) {
+                fs_1.default.mkdirSync(directory, { recursive: true });
+            }
+            // Write the buffer to a file
+            try {
+                fs_1.default.writeFileSync(filePath, buffer);
+                return {
+                    status: "success",
+                    message: "Image saved successfully",
+                    url: `${TEST_IMAGE_URL}`,
+                };
+            }
+            catch (error) {
+                node_color_log_1.default.error("Error saving image", error);
+                return { status: "error", message: "Failed to save image" };
+            }
+            //-------------------------
         }
-        catch (error) {
-            console.error("Error saving image", error);
-            return false;
+        else {
+            // 2. save file on firebase
+            // -------------------------
+            const res = yield (0, common_1.uploadFile)(uniqueName, buffer, folderPath);
+            if (res.downloadURL) {
+                return {
+                    status: "success",
+                    message: "Image saved successfully",
+                    url: res.downloadURL,
+                };
+            }
+            else {
+                return {
+                    status: "error",
+                    message: "Failed to save image",
+                };
+            }
+            //-------------------------
         }
     });
 }
@@ -83,7 +120,7 @@ app.post("/createPost", (req, res) => {
             status: "success",
             message: "Image Generated successfully",
             data: {
-                url: `uploads/test/test_insta.png`,
+                url: `${TEST_IMAGE_URL}`,
             },
         });
     }
@@ -101,9 +138,9 @@ app.post("/createPost", (req, res) => {
             if (((_b = (_a = response === null || response === void 0 ? void 0 : response.data) === null || _a === void 0 ? void 0 : _a.data) === null || _b === void 0 ? void 0 : _b.length) > 0) {
                 const data = response.data.data[0].b64_json;
                 // Generate a unique filename
-                const uniqueName = Date.now() + "-" + Math.round(Math.random() * 1e9) + ".png";
-                const uploadResult = yield saveImage(data, `media/${req.body.projectId}`, uniqueName, true);
-                if (!uploadResult) {
+                const uniqueName = Date.now() + "-" + Math.round(Math.random() * 1e9) + ".jpeg";
+                const uploadResult = yield saveImage(data, `PostProAI/${req.body.projectId}`, uniqueName, true);
+                if (uploadResult.status === "error") {
                     res.json({ status: "error", message: "Failed to save image" });
                     return;
                 }
@@ -111,7 +148,7 @@ app.post("/createPost", (req, res) => {
                     status: "success",
                     message: "Image Generated successfully",
                     data: {
-                        url: `uploads/${req.body.projectId}/${uniqueName}`,
+                        url: uploadResult.url,
                     },
                 });
             }

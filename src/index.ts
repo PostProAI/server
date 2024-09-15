@@ -16,7 +16,9 @@ const app: Express = express();
 const port = process.env.PORT || 5001;
 const ENVIRONMENT = process.env.ENVIRONMENT;
 
-app.use("/uploads", express.static(path.join(__dirname, "/routes/media")));
+if(ENVIRONMENT === "development") {
+  app.use("/uploads", express.static(path.join(__dirname, "/routes/PostProAI")));
+}
 app.use(cors({ origin: APP_URL }));
 connectDB();
 
